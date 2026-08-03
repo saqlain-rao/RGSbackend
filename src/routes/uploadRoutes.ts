@@ -1,25 +1,28 @@
 import { Router } from 'express';
 import multer from 'multer';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import { config } from '../config/env';
 import path from 'path';
-import fs from 'fs';
-import { protect, authorize } from '../middleware/authMiddleware';
 
 const router = Router();
 
-// Ensure uploads directory exists
-const uploadDir = path.join(__dirname, '../../uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: config.cloudinary.cloudName,
+  api_key: config.cloudinary.apiKey,
+  api_secret: config.cloudinary.apiSecret
+});
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir);
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => {
+    return {
+      folder: 'rgs-constructor',
+      format: 'webp', // Auto convert to webp for better performance
+      public_id: `${Date.now()}-${path.parse(file.originalname).name.replace(/[^a-zA-Z0-9]/g, '')}`,
+    };
   },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  }
 });
 
 const upload = multer({ 
@@ -44,10 +47,8 @@ router.post('/', upload.single('image'), (req, res) => {
       return res.status(400).json({ success: false, error: 'No file uploaded' });
     }
     
-    const host = req.get('host');
-    const protocol = req.protocol;
-    // For local dev it's localhost, for Render it's the render URL
-    const imageUrl = `${protocol === 'http' && host?.includes('localhost') ? 'http' : 'https'}://${host}/uploads/${req.file.filename}`;
+    // With Cloudinary, req.file.path contains the Cloudinary URL
+    const imageUrl = req.file.path;
     res.status(200).json({ success: true, data: { url: imageUrl } });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });
