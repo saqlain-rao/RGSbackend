@@ -11,9 +11,9 @@ export const config = {
   jwtSecret: process.env.JWT_SECRET || 'fallback_secret_key_change_in_prod',
   jwtExpire: process.env.JWT_EXPIRE || '30d',
   cloudinary: {
-    cloudName: process.env.CLOUDINARY_CLOUD_NAME || '',
-    apiKey: process.env.CLOUDINARY_API_KEY || '',
-    apiSecret: process.env.CLOUDINARY_API_SECRET || ''
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME || 'qlic7qsi',
+    apiKey: process.env.CLOUDINARY_API_KEY || '715121542414162',
+    apiSecret: process.env.CLOUDINARY_API_SECRET || 'XlxI0FbQCZbnvMmuSfgN1v1uPSk'
   },
   email: {
     host: process.env.SMTP_HOST || '',
