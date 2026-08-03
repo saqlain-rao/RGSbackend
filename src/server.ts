@@ -19,9 +19,10 @@ app.set('trust proxy', 1);
 // Security Middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : (process.env.NODE_ENV === 'production' 
-    ? 'https://rgsconstructor.com' 
-    : ['http://localhost:5173', 'http://localhost:3000']),
+  origin: function (origin, callback) {
+    // Allow all origins (useful for Vercel preview URLs which change dynamically)
+    callback(null, true);
+  },
   credentials: true
 }));
 
