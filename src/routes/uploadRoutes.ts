@@ -44,7 +44,10 @@ router.post('/', upload.single('image'), (req, res) => {
       return res.status(400).json({ success: false, error: 'No file uploaded' });
     }
     
-    const imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+    const host = req.get('host');
+    const protocol = req.protocol;
+    // For local dev it's localhost, for Render it's the render URL
+    const imageUrl = `${protocol === 'http' && host?.includes('localhost') ? 'http' : 'https'}://${host}/uploads/${req.file.filename}`;
     res.status(200).json({ success: true, data: { url: imageUrl } });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });
