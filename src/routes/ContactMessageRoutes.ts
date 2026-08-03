@@ -14,13 +14,13 @@ const router = Router();
 
 router
   .route('/')
-  .get(getContactMessages)
+  .get(protect, authorize('admin'), getContactMessages)
   .post(validate(contactmessageSchema), createContactMessage);
 
 router
   .route('/:id')
-  .get(getContactMessage)
-  .put(validate(contactmessageSchema), updateContactMessage)
-  .delete(deleteContactMessage);
+  .get(protect, authorize('admin'), getContactMessage)
+  .put(protect, authorize('admin'), validate(contactmessageSchema), updateContactMessage)
+  .delete(protect, authorize('admin'), deleteContactMessage);
 
 export default router;

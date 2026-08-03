@@ -15,12 +15,12 @@ const router = Router();
 router
   .route('/')
   .get(getBlogs)
-  .post(validate(blogSchema), createBlog);
+  .post(protect, authorize('admin'), validate(blogSchema), createBlog);
 
 router
   .route('/:id')
   .get(getBlog)
-  .put(validate(blogSchema), updateBlog)
-  .delete(deleteBlog);
+  .put(protect, authorize('admin'), validate(blogSchema), updateBlog)
+  .delete(protect, authorize('admin'), deleteBlog);
 
 export default router;

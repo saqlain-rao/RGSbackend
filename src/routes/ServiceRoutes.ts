@@ -15,12 +15,12 @@ const router = Router();
 router
   .route('/')
   .get(getServices)
-  .post(validate(serviceSchema), createService);
+  .post(protect, authorize('admin'), validate(serviceSchema), createService);
 
 router
   .route('/:id')
   .get(getService)
-  .put(validate(serviceSchema), updateService)
-  .delete(deleteService);
+  .put(protect, authorize('admin'), validate(serviceSchema), updateService)
+  .delete(protect, authorize('admin'), deleteService);
 
 export default router;

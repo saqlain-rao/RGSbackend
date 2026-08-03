@@ -15,12 +15,12 @@ const router = Router();
 router
   .route('/')
   .get(getTeams)
-  .post(validate(teamSchema), createTeam);
+  .post(protect, authorize('admin'), validate(teamSchema), createTeam);
 
 router
   .route('/:id')
   .get(getTeam)
-  .put(validate(teamSchema), updateTeam)
-  .delete(deleteTeam);
+  .put(protect, authorize('admin'), validate(teamSchema), updateTeam)
+  .delete(protect, authorize('admin'), deleteTeam);
 
 export default router;

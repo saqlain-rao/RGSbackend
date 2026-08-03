@@ -7,9 +7,27 @@ import rateLimit from 'express-rate-limit';
 import path from 'path';
 import { config } from './config/env';
 import { connectDB } from './config/db';
+import User from './models/User';
+import bcrypt from 'bcryptjs';
 
 // Connect to database
-connectDB();
+connectDB().then(async () => {
+  // Seed default admin user if none exists
+  try {
+    const adminExists = await User.findOne({ email: 'admin@rgsconstructor.com' });
+    if (!adminExists) {
+      await User.create({
+        name: 'Super Admin',
+        email: 'admin@rgsconstructor.com',
+        password: 'admin123', // Will be hashed by pre-save hook in User model
+        role: 'admin'
+      });
+      console.log('Default admin user created successfully.');
+    }
+  } catch (err) {
+    console.error('Failed to seed default admin:', err);
+  }
+});
 
 const app = express();
 

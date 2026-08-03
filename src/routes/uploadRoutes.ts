@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import multer from 'multer';
+import { protect, authorize } from '../middleware/authMiddleware';
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import { config } from '../config/env';
@@ -41,7 +42,7 @@ const upload = multer({
 });
 
 // Temporarily removing protect/authorize so the admin UI works seamlessly without implementing login flow right now
-router.post('/', upload.single('image'), (req, res) => {
+router.post('/', protect, authorize('admin'), upload.single('image'), (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ success: false, error: 'No file uploaded' });
