@@ -15,12 +15,12 @@ const router = Router();
 router
   .route('/')
   .get(getProjects)
-  .post(protect, authorize('admin'), validate(projectSchema), createProject);
+  .post(validate(projectSchema), createProject);
 
 router
   .route('/:id')
   .get(getProject)
-  .put(protect, authorize('admin'), validate(projectSchema), updateProject)
-  .delete(protect, authorize('admin'), deleteProject);
+  .put(validate(projectSchema), updateProject)
+  .delete(deleteProject);
 
 export default router;

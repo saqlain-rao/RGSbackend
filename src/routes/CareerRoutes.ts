@@ -15,12 +15,12 @@ const router = Router();
 router
   .route('/')
   .get(getCareers)
-  .post(protect, authorize('admin'), validate(careerSchema), createCareer);
+  .post(validate(careerSchema), createCareer);
 
 router
   .route('/:id')
   .get(getCareer)
-  .put(protect, authorize('admin'), validate(careerSchema), updateCareer)
-  .delete(protect, authorize('admin'), deleteCareer);
+  .put(validate(careerSchema), updateCareer)
+  .delete(deleteCareer);
 
 export default router;

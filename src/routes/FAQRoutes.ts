@@ -15,12 +15,12 @@ const router = Router();
 router
   .route('/')
   .get(getFAQs)
-  .post(protect, authorize('admin'), validate(faqSchema), createFAQ);
+  .post(validate(faqSchema), createFAQ);
 
 router
   .route('/:id')
   .get(getFAQ)
-  .put(protect, authorize('admin'), validate(faqSchema), updateFAQ)
-  .delete(protect, authorize('admin'), deleteFAQ);
+  .put(validate(faqSchema), updateFAQ)
+  .delete(deleteFAQ);
 
 export default router;

@@ -15,12 +15,12 @@ const router = Router();
 router
   .route('/')
   .get(getContactMessages)
-  .post(protect, authorize('admin'), validate(contactmessageSchema), createContactMessage);
+  .post(validate(contactmessageSchema), createContactMessage);
 
 router
   .route('/:id')
   .get(getContactMessage)
-  .put(protect, authorize('admin'), validate(contactmessageSchema), updateContactMessage)
-  .delete(protect, authorize('admin'), deleteContactMessage);
+  .put(validate(contactmessageSchema), updateContactMessage)
+  .delete(deleteContactMessage);
 
 export default router;

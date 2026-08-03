@@ -15,12 +15,12 @@ const router = Router();
 router
   .route('/')
   .get(getUsers)
-  .post(protect, authorize('admin'), validate(userSchema), createUser);
+  .post(validate(userSchema), createUser);
 
 router
   .route('/:id')
   .get(getUser)
-  .put(protect, authorize('admin'), validate(userSchema), updateUser)
-  .delete(protect, authorize('admin'), deleteUser);
+  .put(validate(userSchema), updateUser)
+  .delete(deleteUser);
 
 export default router;

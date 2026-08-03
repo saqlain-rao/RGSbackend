@@ -15,12 +15,12 @@ const router = Router();
 router
   .route('/')
   .get(getTestimonials)
-  .post(protect, authorize('admin'), validate(testimonialSchema), createTestimonial);
+  .post(validate(testimonialSchema), createTestimonial);
 
 router
   .route('/:id')
   .get(getTestimonial)
-  .put(protect, authorize('admin'), validate(testimonialSchema), updateTestimonial)
-  .delete(protect, authorize('admin'), deleteTestimonial);
+  .put(validate(testimonialSchema), updateTestimonial)
+  .delete(deleteTestimonial);
 
 export default router;
