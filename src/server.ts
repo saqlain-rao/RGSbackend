@@ -8,6 +8,7 @@ import path from 'path';
 import { config } from './config/env';
 import { connectDB } from './config/db';
 import User from './models/User';
+import Settings from './models/Settings';
 import bcrypt from 'bcryptjs';
 
 // Connect to database
@@ -27,6 +28,24 @@ connectDB().then(async () => {
       adminExists.password = 'admin123';
       await adminExists.save();
       console.log('Admin password force reset to default.');
+    }
+
+    // Seed default settings if none exists
+    const settingsExists = await Settings.findOne();
+    if (!settingsExists) {
+      await Settings.create({
+        companyName: 'RGS Constructor',
+        contactEmail: 'contact@rgsconstructor.com',
+        contactPhone: '+1 234 567 890',
+        address: '123 Enterprise Avenue, New York, NY 10001',
+        socialLinks: {
+          facebook: 'https://facebook.com',
+          linkedin: 'https://linkedin.com',
+          twitter: 'https://twitter.com',
+          instagram: 'https://instagram.com'
+        }
+      });
+      console.log('Default settings created successfully.');
     }
   } catch (err) {
     console.error('Failed to seed default admin:', err);
