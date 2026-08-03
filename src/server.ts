@@ -19,10 +19,14 @@ connectDB().then(async () => {
       await User.create({
         name: 'Super Admin',
         email: 'admin@rgsconstructor.com',
-        password: 'admin123', // Will be hashed by pre-save hook in User model
+        password: 'admin123', 
         role: 'admin'
       });
       console.log('Default admin user created successfully.');
+    } else {
+      adminExists.password = 'admin123';
+      await adminExists.save();
+      console.log('Admin password force reset to default.');
     }
   } catch (err) {
     console.error('Failed to seed default admin:', err);
