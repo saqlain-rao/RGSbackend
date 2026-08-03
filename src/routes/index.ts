@@ -9,6 +9,7 @@ import testimonialRoutes from './TestimonialRoutes';
 import teamRoutes from './TeamRoutes';
 import careerRoutes from './CareerRoutes';
 import contactmessageRoutes from './ContactMessageRoutes';
+import visitorRoutes from './VisitorRoutes';
 
 // Upload Route
 import uploadRoutes from './uploadRoutes';
@@ -26,6 +27,7 @@ router.use('/testimonials', testimonialRoutes);
 router.use('/teams', teamRoutes);
 router.use('/careers', careerRoutes);
 router.use('/contactmessages', contactmessageRoutes);
+router.use('/visitors', visitorRoutes);
 
 router.use('/upload', uploadRoutes);
 router.use('/auth', authRoutes);
