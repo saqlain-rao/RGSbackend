@@ -7,7 +7,7 @@ export const createContactMessage = async (req: Request, res: Response, next: Ne
     const doc = await ContactMessage.create(req.body);
 
     // Send email notification to admin
-    const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER;
+    const adminEmail = process.env.ADMIN_EMAIL || 'saqlainrao211@gmail.com';
     if (adminEmail) {
       const emailHtml = `
         <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
