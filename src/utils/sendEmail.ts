@@ -8,7 +8,31 @@ interface EmailOptions {
 }
 
 const sendEmail = async (options: EmailOptions): Promise<void> => {
-  // Create a transporter using SMTP (for Gmail or other services)
+  // Option 1: Use Web3Forms (HTTP API - Bypasses Render SMTP Block)
+  if (process.env.WEB3FORMS_KEY) {
+    const response = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        access_key: process.env.WEB3FORMS_KEY,
+        name: 'RGS Constructor System',
+        email: 'noreply@rgsconstructor.com',
+        subject: options.subject,
+        message: options.html || options.message,
+      })
+    });
+    
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(`Web3Forms Error: ${result.message || 'Failed to send'}`);
+    }
+    return;
+  }
+
+  // Option 2: Fallback to Nodemailer (May be blocked on free tiers)
   const transporter = nodemailer.createTransport({
     service: process.env.EMAIL_SERVICE || 'gmail',
     auth: {
