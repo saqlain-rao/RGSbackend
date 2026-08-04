@@ -10,26 +10,38 @@ interface EmailOptions {
 const sendEmail = async (options: EmailOptions): Promise<void> => {
   // Option 1: Use Web3Forms (HTTP API - Bypasses Render SMTP Block)
   if (process.env.WEB3FORMS_KEY) {
-    const response = await fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({
+    return new Promise((resolve, reject) => {
+      const https = require('https');
+      const data = JSON.stringify({
         access_key: process.env.WEB3FORMS_KEY,
-        name: 'RGS Constructor System',
-        email: 'noreply@rgsconstructor.com',
         subject: options.subject,
         message: options.html || options.message,
-      })
+        from_name: 'RGS Constructor System'
+      });
+
+      const req = https.request('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Content-Length': Buffer.byteLength(data)
+        }
+      }, (res: any) => {
+        let body = '';
+        res.on('data', (chunk: any) => body += chunk);
+        res.on('end', () => {
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            resolve();
+          } else {
+            reject(new Error(`Web3Forms Error: ${body}`));
+          }
+        });
+      });
+
+      req.on('error', (e: any) => reject(e));
+      req.write(data);
+      req.end();
     });
-    
-    const result = await response.json();
-    if (!response.ok) {
-      throw new Error(`Web3Forms Error: ${result.message || 'Failed to send'}`);
-    }
-    return;
   }
 
   // Option 2: Fallback to Nodemailer (May be blocked on free tiers)
