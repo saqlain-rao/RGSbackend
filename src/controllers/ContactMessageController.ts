@@ -1,9 +1,42 @@
 import { Request, Response, NextFunction } from 'express';
 import ContactMessage from '../models/ContactMessage';
+import sendEmail from '../utils/sendEmail';
 
 export const createContactMessage = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const doc = await ContactMessage.create(req.body);
+
+    // Send email notification to admin
+    const adminEmail = process.env.ADMIN_EMAIL || process.env.EMAIL_USER;
+    if (adminEmail) {
+      const emailHtml = `
+        <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+          <h2 style="color: #d32f2f;">New Contact Request - RGS Constructor</h2>
+          <p><strong>From:</strong> ${doc.name} (${doc.email})</p>
+          <p><strong>Phone:</strong> ${doc.phone}</p>
+          <p><strong>Subject:</strong> ${doc.subject}</p>
+          <hr />
+          <h3>Message:</h3>
+          <p style="white-space: pre-wrap;">${doc.message}</p>
+          <br/>
+          <p><i>Log in to your admin panel to manage this request.</i></p>
+        </div>
+      `;
+
+      try {
+        await sendEmail({
+          email: adminEmail,
+          subject: `New Request: ${doc.subject} - RGS Constructor`,
+          message: `New Contact Request from ${doc.name}. Message: ${doc.message}`,
+          html: emailHtml
+        });
+        console.log('Email notification sent successfully to', adminEmail);
+      } catch (emailError) {
+        console.error('Failed to send email notification:', emailError);
+        // Do not fail the request if email fails
+      }
+    }
+
     res.status(201).json({ success: true, data: doc });
   } catch (error) {
     next(error);
