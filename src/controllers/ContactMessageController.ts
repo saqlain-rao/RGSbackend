@@ -23,18 +23,17 @@ export const createContactMessage = async (req: Request, res: Response, next: Ne
         </div>
       `;
 
-      try {
-        await sendEmail({
-          email: adminEmail,
-          subject: `New Request: ${doc.subject} - RGS Constructor`,
-          message: `New Contact Request from ${doc.name}. Message: ${doc.message}`,
-          html: emailHtml
-        });
+      // Send email in the background to avoid blocking the response
+      sendEmail({
+        email: adminEmail,
+        subject: `New Request: ${doc.subject} - RGS Constructor`,
+        message: `New Contact Request from ${doc.name}. Message: ${doc.message}`,
+        html: emailHtml
+      }).then(() => {
         console.log('Email notification sent successfully to', adminEmail);
-      } catch (emailError) {
+      }).catch((emailError) => {
         console.error('Failed to send email notification:', emailError);
-        // Do not fail the request if email fails
-      }
+      });
     }
 
     res.status(201).json({ success: true, data: doc });
